@@ -7,18 +7,24 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  const { order_id } = req.query;
+  const orderId = req.query.order_id || req.query.reference_id || '';
 
-  if (!order_id) {
+  if (!orderId) {
     return res.status(200).json({ status: 'unpaid', message: 'Order ID kosong' });
   }
 
   const apiKey = "sk_live_d19aa0476d7bbb7bbca4d4f4699e85ce9561f867c7e44cf5";
-  const domains = ['https://paymenku.com', 'https://paymentku.com'];
+  
+  // Cek lewat 2 parameter: order_id dan reference_id
+  const endpoints = [
+    `https://paymenku.com/api/v1/transaction/status?order_id=${encodeURIComponent(orderId)}`,
+    `https://paymenku.com/api/v1/transaction/status?reference_id=${encodeURIComponent(orderId)}`
+  ];
 
-  for (const domain of domains) {
+  let lastResponse = null;
+
+  for (const url of endpoints) {
     try {
-      const url = `${domain}/api/v1/transaction/status?order_id=${encodeURIComponent(order_id)}`;
       const apiRes = await fetch(url, {
         method: 'GET',
         headers: {
@@ -28,9 +34,9 @@ export default async function handler(req, res) {
         }
       });
 
-      if (!apiRes.ok) continue;
-
       const result = await apiRes.json();
+      lastResponse = result;
+
       const status = String(
         result?.data?.status || 
         result?.status || 
@@ -39,12 +45,16 @@ export default async function handler(req, res) {
       ).toLowerCase();
 
       if (['paid', 'success', 'settlement', 'berhasil', 'complete'].includes(status)) {
-        return res.status(200).json({ status: 'paid', data: result });
+        return res.status(200).json({ status: 'paid', gateway_response: result });
       }
     } catch (e) {
-      // Coba domain berikutnya jika gagal
+      // Lewati ke percobaan berikutnya jika fetch bermasalah
     }
   }
 
-  return res.status(200).json({ status: 'unpaid', message: 'Transaksi belum terkonfirmasi paid' });
+  return res.status(200).json({ 
+    status: 'unpaid', 
+    message: 'Belum terbayar atau parameter tidak cocok',
+    raw: lastResponse 
+  });
 }
