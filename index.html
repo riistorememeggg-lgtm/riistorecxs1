@@ -735,7 +735,14 @@ Atau format: email@gmail.com|password" class="w-full bg-zinc-900/90 border borde
           closeQrisModal();
           renderCatalog();
           renderBuyerOrders();
-          alert('Pembayaran Sukses Terverifikasi! Akun CarX Anda sudah langsung dikirim ke menu pesanan di bawah.');
+          // Tampilkan data akun ke modal popup
+      document.getElementById('accPkgName').innerText = currentCheckoutPkg.name;
+      document.getElementById('accUsername').innerText = assignedStock.email;
+      document.getElementById('accPassword').innerText = assignedStock.pass;
+
+      const successModal = document.getElementById('successAccountModal');
+      successModal.classList.remove('hidden');
+      successModal.classList.add('flex');
         } else if (isManual) {
           alertBox.className = "mb-3 p-2.5 rounded-xl bg-red-500/15 border border-red-500/30 text-red-400 text-xs font-semibold flex items-center justify-center gap-2";
           alertText.innerText = "Pembayaran belum masuk! Selesaikan scan QRIS terlebih dahulu.";
@@ -979,5 +986,40 @@ Atau format: email@gmail.com|password" class="w-full bg-zinc-900/90 border borde
       alert('Nomor WhatsApp CS berhasil disimpan!');
     }
   </script>
-</body>
+<!-- POPUP DETAIL AKUN -->
+<div id="successAccountModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-gray-900 border border-emerald-500/50 w-full max-w-md rounded-2xl p-6 relative shadow-2xl text-center">
+    <div class="w-14 h-14 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl border border-emerald-500/40">
+      ✓
+    </div>
+
+    <h3 class="text-xl font-black text-white mb-1">PEMBAYARAN BERHASIL!</h3>
+    <p class="text-xs text-gray-400 mb-5">Berikut data akun CarX Street pesanan Anda:</p>
+
+    <div class="bg-black/50 border border-gray-800 rounded-xl p-4 text-left space-y-2 mb-4 font-mono text-sm">
+      <div class="flex justify-between items-center pb-2 border-b border-gray-800">
+        <span class="text-gray-400 text-xs font-sans">Paket:</span>
+        <span class="text-white font-bold" id="accPkgName">Paket A</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-gray-400 text-xs font-sans">Email / User:</span>
+        <span class="text-emerald-400 font-bold select-all" id="accUsername">carx_sultan_vip@gmail.com</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-gray-400 text-xs font-sans">Password:</span>
+        <span class="text-emerald-400 font-bold select-all" id="accPassword">CarXStreet2026</span>
+      </div>
+    </div>
+
+    <div class="bg-emerald-950/40 border border-emerald-800/60 rounded-xl p-3 mb-5">
+      <p class="text-xs text-emerald-300 font-medium">
+        📌 tinggal login di aplikasi carx street ya bosku, terima kasih :)
+      </p>
+    </div>
+
+    <button onclick="document.getElementById('successAccountModal').classList.add('hidden')" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl text-sm transition">
+      Tutup / Selesai
+    </button>
+  </div>
+</div>
 </html>
