@@ -573,7 +573,7 @@ function deletePackageItem(idx) {
       }, 500);
     }
 
-    // 2. Simpan stok langsung ke Cloud saat Admin tambah stok
+        // 2. Simpan stok langsung ke Cloud saat Admin tambah stok
     async function syncStockToServer() {
       try {
         saveStocksState();
@@ -589,19 +589,9 @@ function deletePackageItem(idx) {
         console.error('Gagal simpan stok ke cloud:', err);
       }
     }
-      try {
-        await fetch('/api/stock_api', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(appStocks)
-        });
-      } catch (err) {
-        console.error('Gagal simpan ke server:', err);
-      }
-    }
 
     function saveState() {
-  localStorage.setItem('rii_users', JSON.stringify(appUsers));
+      localStorage.setItem('rii_users', JSON.stringify(appUsers));
   localStorage.setItem('rii_orders', JSON.stringify(appOrders));
   localStorage.setItem('rii_stocks', JSON.stringify(appStocks));
   localStorage.setItem('rii_cs_phone', appCSPhone);
