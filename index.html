@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>RIISTORE - Toko Akun CarX Street Resmi</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              orange: '#ff5500',
+              red: '#ff1e42',
+              dark: '#0b0c10',
+              card: '#13151b',
+              border: '#1f232e'
+            }
+          },
+          fontFamily: {
+            racing: ['"Chakra Petch"', 'sans-serif'],
+            display: ['"Rajdhani"', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,600;0,700;0,800;1,700&family=Inter:wght@400;500;600;700&family=Rajdhani:wght@600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <style>
+    body {
+      background-color: #08090d;
+      color: #f3f4f6;
+      font-family: 'Inter', sans-serif;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(255, 85, 0, 0.15) 0%, transparent 50%),
+        linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 24px 24px, 24px 24px;
+    }
+    .font-racing {
+      font-family: 'Chakra Petch', sans-serif;
+    }
+    .font-display {
+      font-family: 'Rajdhani', sans-serif;
+    }
+    .carbon-card {
+      background: linear-gradient(180deg, #161821 0%, #111218 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 10px 30px -10px rgba(0,0,0,0.7);
+    }
+    .neon-border-hover:hover {
+      border-color: rgba(255, 85, 0, 0.6);
+      box-shadow: 0 0 25px rgba(255, 85, 0, 0.25);
+    }
+  </style>
+</head>
+<body class="min-h-screen pb-28 antialiased">
+
+  <!-- NAVBAR -->
+  <header class="sticky top-0 z-40 backdrop-blur-md bg-[#08090d]/90 border-b border-brand-border/80">
+    <div class="max-w-6xl mx-auto px-4 h-16 sm:h-20 flex items-center justify-between">
+      <div class="flex items-center gap-2.5 cursor-pointer select-none" onclick="switchView('store')">
+        <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr from-brand-orange to-brand-red flex items-center justify-center font-racing font-extrabold text-xl sm:text-2xl text-white shadow-lg shadow-brand-orange/30">
+          R
+        </div>
+        <div>
+          <h1 class="font-racing font-extrabold text-lg sm:text-2xl tracking-wider text-white flex items-center gap-1.5">
+            RIISTORE <span class="text-[10px] sm:text-xs px-1.5 py-0.5 rounded bg-brand-orange/20 text-brand-orange border border-brand-orange/30">CARX</span>
+          </h1>
+          <p class="text-[9px] sm:text-[10px] tracking-widest text-zinc-400 font-semibold uppercase">Official CarX Street Garage</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2" id="navActions"></div>
+    </div>
+  </header>
+
+  <!-- STORE VIEW -->
+  <main id="viewStore" class="max-w-6xl mx-auto px-4 pt-6 sm:pt-10">
+    <div class="text-center max-w-2xl mx-auto mb-8 sm:mb-12">
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold bg-brand-orange/10 border border-brand-orange/30 text-brand-orange mb-2.5 tracking-wide">
+        ⚡ INSTANT AUTOMATIC DELIVERY
+      </span>
+      <h2 class="font-racing text-2xl sm:text-4xl font-extrabold text-white tracking-tight uppercase">
+        Akun CarX Street Sultan
+      </h2>
+      <p class="text-zinc-400 text-xs sm:text-sm mt-1.5 px-2">
+        Pilih paket sesuai kebutuhan balapmu. Pembayaran QRIS Dinamis cepat dan akun langsung terkirim otomatis.
+      </p>
+    </div>
+
+    <!-- Grid Paket -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" id="packageList"></div>
+
+    <!-- PESANAN SAYA -->
+    <div class="mt-14 sm:mt-20 border-t border-brand-border pt-8 sm:pt-10">
+      <div class="flex items-center justify-between mb-4 sm:mb-6">
+        <div>
+          <h3 class="font-racing text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
+            📦 Pesanan & Akun Saya
+          </h3>
+          <p class="text-[11px] sm:text-xs text-zinc-400">Daftar akun CarX yang telah Anda beli.</p>
+        </div>
+      </div>
+      <div id="buyerOrdersList" class="space-y-4"></div>
+    </div>
+  </main>
+
+  <!-- ADMIN VIEW -->
+  <main id="viewAdmin" class="max-w-6xl mx-auto px-4 pt-6 sm:pt-8 hidden">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-6 border-b border-brand-border">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="px-2.5 py-0.5 rounded bg-brand-red/20 text-brand-red border border-brand-red/30 text-[10px] sm:text-xs font-bold uppercase tracking-wider">Admin Panel</span>
+          <h2 class="font-racing text-xl sm:text-2xl font-extrabold text-white">Dashboard RIISTORE</h2>
+        </div>
+        <p class="text-xs text-zinc-400 mt-1">Kelola transaksi, omset, stok akun massal, serta kontak WhatsApp CS.</p>
+      </div>
+      <button onclick="switchView('store')" class="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-xs font-bold text-zinc-200 transition text-center">
+        ← Kembali ke Toko
+      </button>
+    </div>
+
+    <!-- Admin Tabs -->
+    <div class="flex items-center gap-2 border-b border-brand-border pb-4 mb-6 overflow-x-auto">
+      <button id="tabBtnOrders" onclick="switchAdminTab('orders')" class="px-3.5 py-2 rounded-lg text-xs font-bold uppercase whitespace-nowrap transition bg-brand-orange text-white">
+        Data Transaksi & Omset
+      </button>
+      <button id="tabBtnStock" onclick="switchAdminTab('stock')" class="px-3.5 py-2 rounded-lg text-xs font-bold uppercase whitespace-nowrap transition bg-zinc-800 text-zinc-400 hover:text-white">
+        Kelola Stok Akun
+      </button>
+      <button id="tabBtnSettings" onclick="switchAdminTab('settings')" class="px-3.5 py-2 rounded-lg text-xs font-bold uppercase whitespace-nowrap transition bg-zinc-800 text-zinc-400 hover:text-white">
+        Pengaturan CS WA
+      </button>
+    </div>
+
+    <!-- TAB 1: TRANSAKSI & OMSET -->
+    <div id="adminTabOrders" class="space-y-6">
+      <div class="carbon-card rounded-2xl p-5 border border-brand-border relative overflow-hidden">
+        <div class="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-1">Total Omset</div>
+        <div id="statGrossRevenue" class="font-display text-3xl sm:text-4xl font-extrabold text-brand-orange">Rp 0</div>
+        <p class="text-[11px] text-zinc-500 mt-1">Total akumulasi pembayaran dari seluruh pesanan yang berhasil.</p>
+      </div>
+
+      <div class="carbon-card rounded-2xl overflow-hidden border border-brand-border">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-zinc-900/80 border-b border-brand-border text-zinc-400 font-bold uppercase tracking-wider">
+              <tr>
+                <th class="p-3 sm:p-4">Invoice</th>
+                <th class="p-3 sm:p-4">Buyer</th>
+                <th class="p-3 sm:p-4">Paket</th>
+                <th class="p-3 sm:p-4">Nominal</th>
+                <th class="p-3 sm:p-4">Waktu</th>
+                <th class="p-3 sm:p-4">Status</th>
+                <th class="p-3 sm:p-4">Detail Akun</th>
+              </tr>
+            </thead>
+            <tbody id="adminOrderTable" class="divide-y divide-brand-border/40"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: STOK MASSAL & FILTER -->
+    <div id="adminTabStock" class="hidden space-y-6">
+      <div class="carbon-card rounded-2xl p-4 sm:p-6 border border-brand-border">
+        <h3 class="font-racing text-base sm:text-lg font-bold text-white mb-1 flex items-center gap-2">
+          <span class="text-brand-orange">+</span> Tambah Stok Sekaligus Banyak (Bulk Import)
+        </h3>
+        <p class="text-xs text-zinc-400 mb-4">Data akun akan langsung tersimpan permanen di server hosting.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2">Pilih Paket Tujuan</label>
+            <select id="stockPackageSelect" class="w-full bg-zinc-900/90 border border-brand-border rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-orange">
+              <option value="A">PAKET A - Rp 7.000</option>
+              <option value="B">PAKET B - Rp 10.000</option>
+              <option value="C">PAKET C - Rp 15.000</option>
+              <option value="D">PAKET D - Rp 20.000</option>
+              <option value="E">PAKET E VIP - Rp 50.000</option>
+            </select>
+          </div>
+
+          <div class="flex flex-col justify-end">
+            <label class="flex items-center gap-2 p-3 bg-zinc-900/80 border border-brand-border rounded-xl cursor-pointer">
+              <input type="checkbox" id="autoPassCheck" checked onchange="toggleAutoPassInput()" class="w-4 h-4 accent-brand-orange rounded">
+              <span class="text-xs font-semibold text-zinc-300">
+                Otomatis Password ke: <strong class="text-brand-orange font-mono">11223344</strong>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div id="manualPassGroup" class="mb-4 hidden">
+          <label class="block text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2">Password Default Manual</label>
+          <input type="text" id="manualDefaultPass" placeholder="Masukkan password default kustom..." class="w-full bg-zinc-900 border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-orange">
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2">Daftar Email Akun (1 Baris = 1 Akun)</label>
+          <textarea id="bulkAccountInput" rows="4" placeholder="akun1@gmail.com
+akun2@gmail.com
+Atau format: email@gmail.com|password" class="w-full bg-zinc-900/90 border border-brand-border rounded-xl p-3 text-xs font-mono text-zinc-200 focus:outline-none focus:border-brand-orange leading-relaxed"></textarea>
+        </div>
+
+        <button onclick="handleBulkAddStock()" class="w-full py-3 rounded-xl bg-gradient-to-r from-brand-orange to-brand-red text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-brand-orange/20 hover:opacity-90 transition">
+          ⚡ Masukkan Semua Akun ke Server
+        </button>
+      </div>
+
+      <div class="carbon-card rounded-2xl p-4 sm:p-6 border border-brand-border">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          <div class="flex flex-wrap items-center gap-1.5" id="stockFilterBtns"></div>
+          
+          <div class="flex items-center gap-2">
+            <button onclick="refreshStockFromServer()" id="btnRefreshStock" class="px-3 py-1.5 rounded-lg bg-sky-500/10 border border-sky-500/30 text-sky-400 text-xs font-bold hover:bg-sky-500 hover:text-white transition flex items-center gap-1.5">
+              <span>🔄</span> Refresh Stok
+            </button>
+            <button onclick="clearCurrentFilterStock()" class="px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-bold hover:bg-red-500 hover:text-white transition">
+              Kosongkan Tab Ini
+            </button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto rounded-xl border border-brand-border/60">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-zinc-900 text-zinc-400 uppercase tracking-wider border-b border-brand-border">
+              <tr>
+                <th class="p-3">Paket</th>
+                <th class="p-3">Email / ID Akun</th>
+                <th class="p-3">Password</th>
+                <th class="p-3 text-right">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="adminStockTable" class="divide-y divide-brand-border/40 font-mono"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: SETTING WA CS -->
+    <div id="adminTabSettings" class="hidden">
+      <div class="carbon-card rounded-2xl p-5 sm:p-6 border border-brand-border max-w-lg">
+        <h3 class="font-racing text-base sm:text-lg font-bold text-white mb-2">Pengaturan Kontak WhatsApp CS</h3>
+        <p class="text-xs text-zinc-400 mb-4">Nomor ini yang akan otomatis dihubungi saat tombol WhatsApp melayang diklik pembeli.</p>
+        
+        <div class="mb-4">
+          <label class="block text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2">Nomor WhatsApp CS (Awali dengan kode 62)</label>
+          <input type="text" id="adminWhatsappInput" placeholder="Contoh: 6281234567890" class="w-full bg-zinc-900 border border-brand-border rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-orange">
+        </div>
+
+        <button onclick="saveAdminWhatsapp()" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs uppercase tracking-wider transition">
+          Simpan Nomor CS
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- MODAL AUTH -->
+  <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
+    <div class="carbon-card w-full max-w-sm rounded-2xl p-5 sm:p-6 border border-brand-border relative">
+      <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white text-lg">✕</button>
+      <h3 id="authModalTitle" class="font-racing text-xl font-bold text-white mb-1">Masuk ke RIISTORE</h3>
+      <p class="text-xs text-zinc-400 mb-4">Silakan masuk atau buat akun baru.</p>
+
+      <div id="authErrorAlert" class="hidden mb-4 p-3 rounded-xl bg-red-500/15 border border-red-500/30 text-red-400 text-xs font-semibold flex items-center gap-2">
+        <span>⚠️</span>
+        <span id="authErrorMsg">Username atau password salah!</span>
+      </div>
+
+      <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-3.5">
+        <div>
+          <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Username</label>
+          <input type="text" id="authUsername" required placeholder="Username Anda" class="w-full bg-zinc-900 border border-brand-border rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-orange">
+        </div>
+        <div id="groupEmail">
+          <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Gmail / Email</label>
+          <input type="email" id="authEmail" placeholder="nama@gmail.com" class="w-full bg-zinc-900 border border-brand-border rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-orange">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-zinc-400 uppercase mb-1">Password</label>
+          <input type="password" id="authPassword" required placeholder="••••••••" class="w-full bg-zinc-900 border border-brand-border rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-orange">
+        </div>
+        <button type="submit" id="authSubmitBtn" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-brand-orange to-brand-red text-white text-xs font-bold uppercase tracking-wider transition hover:opacity-90 mt-2">
+          Masuk Sekarang
+        </button>
+      </form>
+
+      <div class="mt-4 text-center text-xs text-zinc-400">
+        <span id="authToggleText">Belum punya akun?</span>
+        <a href="#" onclick="toggleAuthMode(event)" id="authToggleLink" class="text-brand-orange font-bold hover:underline ml-1">Daftar</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL QRIS -->
+  <div id="qrisModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm hidden">
+    <div class="carbon-card w-full max-w-sm rounded-2xl p-5 sm:p-6 border border-brand-border text-center relative max-h-[95vh] overflow-y-auto">
+      <button onclick="closeQrisModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white text-lg">✕</button>
+      
+      <span class="inline-block px-2.5 py-0.5 rounded-full bg-brand-orange/20 text-brand-orange border border-brand-orange/30 text-[10px] font-bold uppercase tracking-wider mb-2">QRIS ASLI PAYMENTKU</span>
+      <h3 class="font-racing text-lg sm:text-xl font-bold text-white mb-1" id="qrisPackageTitle">PAKET CARX</h3>
+      <p class="text-xs text-zinc-400 mb-3">Scan kode QR di bawah menggunakan BCA, GoPay, OVO, Dana, ShopeePay, dll.</p>
+
+      <div class="bg-white p-2.5 rounded-2xl inline-block shadow-inner mb-3">
+        <div id="qrcodeCanvas"></div>
+      </div>
+
+      <div class="text-xs text-zinc-400">Total Transfer:</div>
+      <div id="qrisTotalAmount" class="font-display font-extrabold text-2xl sm:text-3xl text-brand-orange my-1">
+        Rp 0
+      </div>
+
+      <div class="bg-zinc-900/90 border border-brand-border rounded-xl py-2 px-3 mb-3 text-xs font-semibold text-zinc-300">
+        Sisa Waktu Bayar: <span id="qrisTimer" class="font-mono text-white font-bold">15:00</span>
+      </div>
+
+      <!-- STATUS AUTO DETECT -->
+      <div id="qrisStatusAlert" class="mb-3 p-2.5 rounded-xl bg-sky-500/10 border border-sky-500/30 text-sky-400 text-xs font-semibold flex items-center justify-center gap-2">
+        <span class="inline-block w-2 h-2 rounded-full bg-sky-400 animate-ping"></span>
+        <span id="qrisStatusText">Menunggu pembayaran (Otomatis dicek)...</span>
+      </div>
+
+      <button id="btnCheckQris" onclick="verifyRealPayment(true)" class="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs uppercase tracking-wider transition">
+        ⚡ Cek Pembayaran Sekarang
+      </button>
+    </div>
+  </div>
+
+  <!-- FLOATING WA -->
+  <a href="#" target="_blank" id="waFloatBtn" class="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-emerald-500 hover:bg-emerald-400 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30 transition transform hover:scale-105 z-40" title="Chat CS WhatsApp">
+    <svg class="w-6 h-6 sm:w-8 sm:h-8 fill-current" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.969.586 1.861.947 2.802.947 3.178 0 5.765-2.587 5.767-5.766.001-3.187-2.575-5.77-5.773-5.771zm4.195 8.169c-.179.502-.878.922-1.393.992-.472.064-.99.096-2.573-.556-1.921-.791-3.149-2.736-3.245-2.864-.096-.128-.776-1.031-.776-1.966 0-.935.489-1.393.664-1.583.179-.19.39-.239.52-.239.13 0 .26.002.373.007.119.006.278-.045.434.331.161.389.552 1.345.6 1.442.049.098.082.213.016.342-.065.13-.098.211-.195.324-.097.114-.206.255-.294.342-.098.098-.201.205-.086.402.114.196.509.84 1.092 1.359.75.669 1.383.876 1.579.974.195.098.31.082.424-.049.115-.13.489-.569.619-.764.13-.195.26-.163.439-.098.179.065 1.134.536 1.329.633.195.098.325.147.373.228.049.082.049.471-.13 0.973z"/></svg>
+  </a>
+
+  <!-- SCRIPT LOGIC -->
+  <script>
+    const PACKAGES = [
+      { id: 'A', name: 'PAKET A', price: 7000, silver: '3M', gold: '3K', lvl: 50, map: 'Semua Terbuka', extra: [] },
+      { id: 'B', name: 'PAKET B', price: 10000, silver: '5M', gold: '5K', lvl: 50, map: 'Semua Terbuka', extra: [] },
+      { id: 'C', name: 'PAKET C', price: 15000, silver: '8M', gold: '8K', lvl: 50, map: 'Semua Terbuka', extra: ['Paling Populer'] },
+      { id: 'D', name: 'PAKET D', price: 20000, silver: '12M', gold: '12K', lvl: 50, map: 'Semua Terbuka', extra: [] },
+      { id: 'E', name: 'PAKET E VIP', price: 50000, silver: '12M', gold: '12K', lvl: 50, map: 'Semua Terbuka', extra: ['Aksesoris Terbuka', 'Dapat 36 Mobil (Tuning Drift/Balap)'], isVip: true }
+    ];
+
+    let appUsers = JSON.parse(localStorage.getItem('rii_users')) || [
+      { username: 'admin', email: 'admin@riistore.com', password: 'admin123', role: 'admin' }
+    ];
+
+    let appStocks = [];
+    let appOrders = JSON.parse(localStorage.getItem('rii_orders')) || [];
+    let appCSPhone = localStorage.getItem('rii_cs_phone') || '6281234567890';
+    let currentUser = JSON.parse(localStorage.getItem('rii_cur_user')) || null;
+
+    let activeFilterPkg = 'ALL';
+    let authMode = 'login';
+    let currentCheckoutPkg = null;
+    let currentOrderId = '';
+    let timerInterval = null;
+    let autoCheckInterval = null; // Interval auto-check
+
+    window.onload = function() {
+      updateNav();
+      renderBuyerOrders();
+      updateCSButton();
+      loadStocksFromServer();
+    };
+
+    async function loadStocksFromServer() {
+      try {
+        const res = await fetch('stock_api.php');
+        const data = await res.json();
+        appStocks = Array.isArray(data) ? data : [];
+      } catch (err) {
+        appStocks = [];
+      }
+      renderCatalog();
+      renderAdminStockFilterButtons();
+      renderAdminStock();
+    }
+
+    async function refreshStockFromServer() {
+      const btn = document.getElementById('btnRefreshStock');
+      const ori = btn.innerHTML;
+      btn.innerHTML = '<span>⏳</span> Memuat...';
+      btn.disabled = true;
+
+      await loadStocksFromServer();
+
+      setTimeout(() => {
+        btn.innerHTML = ori;
+        btn.disabled = false;
+      }, 500);
+    }
+
+    async function syncStockToServer() {
+      try {
+        await fetch('stock_api.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(appStocks)
+        });
+      } catch (err) {
+        console.error('Gagal simpan ke server:', err);
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem('rii_users', JSON.stringify(appUsers));
+      localStorage.setItem('rii_orders', JSON.stringify(appOrders));
+      localStorage.setItem('rii_cs_phone', appCSPhone);
+      if (currentUser) {
+        localStorage.setItem('rii_cur_user', JSON.stringify(currentUser));
+      } else {
+        localStorage.removeItem('rii_cur_user');
+      }
+    }
+
+    function updateCSButton() {
+      const btn = document.getElementById('waFloatBtn');
+      const msg = encodeURIComponent('Halo Admin RIISTORE, saya mau tanya seputar akun CarX Street.');
+      btn.href = `https://wa.me/${appCSPhone}?text=${msg}`;
+    }
+
+    function updateNav() {
+      const nav = document.getElementById('navActions');
+      if (!currentUser) {
+        nav.innerHTML = `
+          <button onclick="openAuthModal('login')" class="px-3 sm:px-4 py-2 rounded-xl bg-zinc-800/80 hover:bg-zinc-700 text-xs font-bold text-zinc-200 transition">Masuk</button>
+          <button onclick="openAuthModal('register')" class="px-3 sm:px-4 py-2 rounded-xl bg-gradient-to-r from-brand-orange to-brand-red text-white text-xs font-bold shadow-lg shadow-brand-orange/20 hover:opacity-90 transition">Daftar</button>
+        `;
+      } else {
+        const adminBtn = currentUser.role === 'admin' 
+          ? `<button onclick="switchView('admin')" class="px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-brand-orange to-brand-red text-white text-xs font-bold flex items-center gap-1.5 shadow-lg shadow-brand-orange/20">⚙ <span class="hidden sm:inline">Panel Admin</span><span class="sm:hidden">Admin</span></button>`
+          : '';
+        nav.innerHTML = `
+          <div class="text-xs text-zinc-400 font-medium hidden md:block">Halo, <strong class="text-white">${currentUser.username}</strong></div>
+          ${adminBtn}
+          <button onclick="handleLogout()" class="px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-xs font-bold text-zinc-300 transition">Keluar</button>
+        `;
+      }
+    }
+
+    function showAuthError(msg) {
+      const alertBox = document.getElementById('authErrorAlert');
+      const alertMsg = document.getElementById('authErrorMsg');
+      alertMsg.innerText = msg;
+      alertBox.classList.remove('hidden');
+    }
+
+    function openAuthModal(mode) {
+      authMode = mode;
+      const modal = document.getElementById('authModal');
+      const title = document.getElementById('authModalTitle');
+      const submitBtn = document.getElementById('authSubmitBtn');
+      const groupEmail = document.getElementById('groupEmail');
+      const toggleText = document.getElementById('authToggleText');
+      const toggleLink = document.getElementById('authToggleLink');
+
+      document.getElementById('authErrorAlert').classList.add('hidden');
+
+      if (mode === 'register') {
+        title.innerText = 'Daftar Akun RIISTORE';
+        submitBtn.innerText = 'Buat Akun Sekarang';
+        groupEmail.classList.remove('hidden');
+        document.getElementById('authEmail').required = true;
+        toggleText.innerText = 'Sudah punya akun?';
+        toggleLink.innerText = 'Masuk';
+      } else {
+        title.innerText = 'Masuk ke RIISTORE';
+        submitBtn.innerText = 'Masuk Sekarang';
+        groupEmail.classList.add('hidden');
+        document.getElementById('authEmail').required = false;
+        toggleText.innerText = 'Belum punya akun?';
+        toggleLink.innerText = 'Daftar';
+      }
+      modal.classList.remove('hidden');
+    }
+
+    function closeAuthModal() {
+      document.getElementById('authModal').classList.add('hidden');
+    }
+
+    function toggleAuthMode(e) {
+      e.preventDefault();
+      openAuthModal(authMode === 'login' ? 'register' : 'login');
+    }
+
+    function handleAuthSubmit(e) {
+      e.preventDefault();
+      document.getElementById('authErrorAlert').classList.add('hidden');
+
+      const u = document.getElementById('authUsername').value.trim();
+      const p = document.getElementById('authPassword').value.trim();
+
+      if (authMode === 'register') {
+        const em = document.getElementById('authEmail').value.trim();
+        if (appUsers.some(x => x.username.toLowerCase() === u.toLowerCase())) {
+          showAuthError('Username sudah terpakai!');
+          return;
+        }
+        const newUser = { username: u, email: em, password: p, role: 'buyer' };
+        appUsers.push(newUser);
+        currentUser = newUser;
+        saveState();
+      } else {
+        const user = appUsers.find(x => x.username.toLowerCase() === u.toLowerCase() && x.password === p);
+        if (!user) {
+          showAuthError('Username atau password salah!');
+          return;
+        }
+        currentUser = user;
+        saveState();
+      }
+      closeAuthModal();
+      updateNav();
+      renderBuyerOrders();
+    }
+
+    function handleLogout() {
+      currentUser = null;
+      saveState();
+      updateNav();
+      switchView('store');
+      renderBuyerOrders();
+    }
+
+    function switchView(view) {
+      const storeEl = document.getElementById('viewStore');
+      const adminEl = document.getElementById('viewAdmin');
+
+      if (view === 'admin') {
+        if (!currentUser || currentUser.role !== 'admin') {
+          showAuthError('Akses khusus panel admin!');
+          openAuthModal('login');
+          return;
+        }
+        storeEl.classList.add('hidden');
+        adminEl.classList.remove('hidden');
+        renderAdminTables();
+      } else {
+        adminEl.classList.add('hidden');
+        storeEl.classList.remove('hidden');
+      }
+    }
+
+    function renderCatalog() {
+      const container = document.getElementById('packageList');
+      container.innerHTML = PACKAGES.map(pkg => {
+        const stockCount = appStocks.filter(s => s.pkg === pkg.id).length;
+        const extraBadges = pkg.extra.map(ex => `
+          <li class="flex items-center gap-2 text-xs text-zinc-300">
+            <span class="text-brand-orange font-bold">✓</span> ${ex}
+          </li>
+        `).join('');
+
+        return `
+          <div class="carbon-card rounded-2xl p-5 sm:p-6 relative flex flex-col justify-between neon-border-hover transition duration-200 border border-brand-border ${pkg.isVip ? 'ring-1 ring-amber-500/50' : ''}">
+            ${pkg.isVip ? '<span class="absolute top-4 right-4 bg-gradient-to-r from-amber-400 to-amber-600 text-black font-racing font-extrabold text-[10px] px-2 py-0.5 rounded tracking-wider uppercase">VIP EDITION</span>' : ''}
+            <div>
+              <div class="mb-4">
+                <h3 class="font-racing text-lg sm:text-xl font-bold text-white tracking-wide">${pkg.name}</h3>
+                <div class="font-display font-bold text-2xl sm:text-3xl text-brand-orange mt-1">Rp ${pkg.price.toLocaleString('id-ID')}</div>
+                <div class="text-[11px] text-zinc-400 mt-1">
+                  Sisa Stok: <span class="font-bold ${stockCount > 0 ? 'text-sky-400' : 'text-red-400'}">${stockCount} Akun</span>
+                </div>
+              </div>
+
+              <ul class="space-y-2 border-t border-brand-border/60 py-3.5 my-2">
+                <li class="flex items-center gap-2 text-xs text-zinc-300"><span class="text-brand-orange font-bold">✓</span> SILVER ${pkg.silver}</li>
+                <li class="flex items-center gap-2 text-xs text-zinc-300"><span class="text-brand-orange font-bold">✓</span> GOLD ${pkg.gold}</li>
+                <li class="flex items-center gap-2 text-xs text-zinc-300"><span class="text-brand-orange font-bold">✓</span> LEVEL AKUN ${pkg.lvl}</li>
+                <li class="flex items-center gap-2 text-xs text-zinc-300"><span class="text-brand-orange font-bold">✓</span> ${pkg.map}</li>
+                ${extraBadges}
+              </ul>
+            </div>
+
+            <button onclick="startOrder('${pkg.id}')" ${stockCount === 0 ? 'disabled' : ''} class="w-full mt-3 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition ${
+              stockCount > 0 
+                ? 'bg-gradient-to-r from-brand-orange to-brand-red text-white shadow-lg shadow-brand-orange/20 hover:opacity-90' 
+                : 'bg-zinc-800 text-zinc-500 cursor-not-allowed border border-zinc-700/50'
+            }">
+              ${stockCount > 0 ? 'Beli Sekarang' : 'Stok Habis'}
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function startOrder(pkgId) {
+      if (!currentUser) {
+        openAuthModal('login');
+        return;
+      }
+      const stock = appStocks.find(s => s.pkg === pkgId);
+      if (!stock) {
+        alert('Stok paket ini baru saja habis. Silakan hubungi CS WhatsApp!');
+        renderCatalog();
+        return;
+      }
+
+      currentCheckoutPkg = PACKAGES.find(p => p.id === pkgId);
+      const btn = event.target;
+      const oriText = btn.innerText;
+      btn.innerText = "Membuat QRIS...";
+      btn.disabled = true;
+
+      try {
+        const res = await fetch(/api/create_payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            pkgName: currentCheckoutPkg.name,
+            amount: currentCheckoutPkg.price,
+            buyer: currentUser.username,
+            email: currentUser.email || 'buyer@riistore.com'
+          })
+        });
+
+        const data = await res.json();
+
+        if (data.status === 'success') {
+          currentOrderId = data.order_id;
+          document.getElementById('qrisPackageTitle').innerText = currentCheckoutPkg.name;
+          document.getElementById('qrisTotalAmount').innerText = `Rp ${Number(data.amount).toLocaleString('id-ID')}`;
+          document.getElementById('qrisModal').dataset.total = data.amount;
+
+          const qrContainer = document.getElementById('qrcodeCanvas');
+          qrContainer.innerHTML = '';
+          new QRCode(qrContainer, {
+            text: data.qr_string,
+            width: 160,
+            height: 160
+          });
+
+          // HITUNG MUNDUR 15 MENIT
+          let sec = 900;
+          clearInterval(timerInterval);
+          timerInterval = setInterval(() => {
+            sec--;
+            const m = Math.floor(sec / 60);
+            const s = sec % 60;
+            document.getElementById('qrisTimer').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+            if (sec <= 0) {
+              clearInterval(timerInterval);
+              closeQrisModal();
+              alert('Waktu pembayaran QRIS habis!');
+            }
+          }, 1000);
+
+          // RESET PESAN STATUS
+          const alertBox = document.getElementById('qrisStatusAlert');
+          alertBox.className = "mb-3 p-2.5 rounded-xl bg-sky-500/10 border border-sky-500/30 text-sky-400 text-xs font-semibold flex items-center justify-center gap-2";
+          document.getElementById('qrisStatusText').innerText = "Menunggu pembayaran (Otomatis dicek)...";
+          document.getElementById('qrisModal').classList.remove('hidden');
+
+          // MULAI PENGECEKAN OTOMATIS TIAP 3 DETIK
+          clearInterval(autoCheckInterval);
+          autoCheckInterval = setInterval(() => {
+            verifyRealPayment(false); // background auto-check
+          }, 3000);
+
+        } else {
+          alert(data.message || 'Gagal memproses QRIS ke payment gateway.');
+        }
+      } catch (err) {
+        alert('Gagal membuat tagihan QRIS. Pastikan create_payment.php sudah aktif.');
+      } finally {
+        btn.innerText = oriText;
+        btn.disabled = false;
+      }
+    }
+
+    function closeQrisModal() {
+      clearInterval(timerInterval);
+      clearInterval(autoCheckInterval);
+      document.getElementById('qrisModal').classList.add('hidden');
+    }
+
+    // VERIFIKASI PEMBAYARAN (isManual = true jika diklik tombol)
+    async function verifyRealPayment(isManual = false) {
+      if (!currentOrderId || !currentCheckoutPkg) return;
+
+      const btn = document.getElementById('btnCheckQris');
+      const alertBox = document.getElementById('qrisStatusAlert');
+      const alertText = document.getElementById('qrisStatusText');
+
+      if (isManual) {
+        btn.disabled = true;
+        btn.innerText = "Mengecek ke Bank...";
+      }
+
+      try {
+        const res = await fetch(`/api/check_status?order_id=${encodeURIComponent(currentOrderId)}`);
+        const data = await res.json();
+
+        if (data.status === 'paid') {
+          clearInterval(autoCheckInterval);
+          clearInterval(timerInterval);
+
+          const stockIndex = appStocks.findIndex(s => s.pkg === currentCheckoutPkg.id);
+          if (stockIndex === -1) {
+            alert('Pembayaran sukses, namun stok baru saja habis! Hubungi CS WA dengan menyertakan bukti invoice.');
+            closeQrisModal();
+            return;
+          }
+
+          const assignedStock = appStocks.splice(stockIndex, 1)[0];
+          await syncStockToServer();
+
+          const newOrder = {
+            invoice: 'RII-' + (currentOrderId ? currentOrderId.slice(-6) : Date.now().toString().slice(-6)),
+            buyer: currentUser.username,
+            pkgId: currentCheckoutPkg.id,
+            pkgName: currentCheckoutPkg.name,
+            price: parseInt(document.getElementById('qrisModal').dataset.total),
+            time: new Date().toLocaleString('id-ID'),
+            status: 'SUCCESS',
+            account: {
+              email: assignedStock.email,
+              pass: assignedStock.pass
+            },
+            autoNote: "tinggal login di carx street saja ya bosku, terima kasih :)"
+          };
+
+          appOrders.unshift(newOrder);
+          saveState();
+          closeQrisModal();
+          renderCatalog();
+          renderBuyerOrders();
+          alert('Pembayaran Sukses Terverifikasi! Akun CarX Anda sudah langsung dikirim ke menu pesanan di bawah.');
+        } else if (isManual) {
+          alertBox.className = "mb-3 p-2.5 rounded-xl bg-red-500/15 border border-red-500/30 text-red-400 text-xs font-semibold flex items-center justify-center gap-2";
+          alertText.innerText = "Pembayaran belum masuk! Selesaikan scan QRIS terlebih dahulu.";
+        }
+      } catch (err) {
+        if (isManual) {
+          alertBox.className = "mb-3 p-2.5 rounded-xl bg-red-500/15 border border-red-500/30 text-red-400 text-xs font-semibold flex items-center justify-center gap-2";
+          alertText.innerText = "Gagal menghubungi server. Sedang mencoba ulang...";
+        }
+      } finally {
+        if (isManual) {
+          btn.disabled = false;
+          btn.innerText = "⚡ Cek Pembayaran Sekarang";
+        }
+      }
+    }
+
+    function renderBuyerOrders() {
+      const container = document.getElementById('buyerOrdersList');
+      if (!currentUser) {
+        container.innerHTML = `<div class="carbon-card rounded-2xl p-6 text-center text-xs text-zinc-400">Silakan login untuk melihat rincian pesanan dan login akun game Anda.</div>`;
+        return;
+      }
+
+      const myOrders = appOrders.filter(o => o.buyer === currentUser.username);
+      if (myOrders.length === 0) {
+        container.innerHTML = `<div class="carbon-card rounded-2xl p-6 text-center text-xs text-zinc-400">Belum ada pesanan aktif. Pilih salah satu paket di atas untuk mulai bertransaksi!</div>`;
+        return;
+      }
+
+      container.innerHTML = myOrders.map(order => `
+        <div class="carbon-card rounded-2xl p-4 sm:p-5 border border-brand-border">
+          <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-brand-border/60">
+            <div>
+              <span class="font-racing font-bold text-white text-sm">${order.invoice}</span> - <span class="font-bold text-brand-orange text-sm">${order.pkgName}</span>
+              <div class="text-[11px] text-zinc-500">${order.time}</div>
+            </div>
+            <span class="px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold">SUKSES TERKIRIM</span>
+          </div>
+
+          <div class="bg-emerald-500/15 border border-emerald-500/40 rounded-xl px-3 py-2.5 mb-3 text-center">
+            <p class="text-xs sm:text-sm font-bold text-emerald-300">
+              🎮 ${order.autoNote}
+            </p>
+          </div>
+
+          <div class="bg-zinc-900/90 rounded-xl p-3.5 border border-brand-border/60 font-mono text-xs">
+            <div class="flex items-center justify-between mb-2 pb-2 border-b border-zinc-800">
+              <span class="text-zinc-400">Email Akun:</span>
+              <span class="text-white font-bold select-all break-all">${order.account.email}</span>
+            </div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-zinc-400">Password:</span>
+              <span class="text-sky-400 font-bold select-all">${order.account.pass}</span>
+            </div>
+            <button onclick="copyAccount('${order.account.email}', '${order.account.pass}')" class="w-full py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-bold font-sans transition">
+              📋 Salin Email & Password
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function copyAccount(email, pass) {
+      navigator.clipboard.writeText(`Email: ${email}\nPassword: ${pass}`);
+      alert('Data login CarX berhasil disalin ke clipboard!');
+    }
+
+    function switchAdminTab(tab) {
+      document.getElementById('adminTabOrders').classList.toggle('hidden', tab !== 'orders');
+      document.getElementById('adminTabStock').classList.toggle('hidden', tab !== 'stock');
+      document.getElementById('adminTabSettings').classList.toggle('hidden', tab !== 'settings');
+
+      document.getElementById('tabBtnOrders').className = tab === 'orders' ? 'px-3.5 py-2 rounded-lg text-xs font-bold uppercase whitespace-nowrap transition bg-brand-orange text-white' : 'px-3.5 py-2 rounded-lg text-xs font-bold uppercase whitespace-nowrap transition bg-zinc-800 text-zinc-400 hover:text-white';
+      document.getElementById('tabBtnStock').className = tab === 'stock' ? 'px-3.5 py-2 rounded-lg text-xs font-bold uppercase whitespace-nowrap transition bg-brand-orange text-white' : 'px-3.5 py-2 rounded-lg text-xs font-bold uppercase whitespace-nowrap transition bg-zinc-800 text-zinc-400 hover:text-white';
+      document.getElementById('tabBtnSettings').className = tab === 'settings' ? 'px-3.5 py-2 rounded-lg text-xs font-bold uppercase whitespace-nowrap transition bg-brand-orange text-white' : 'px-3.5 py-2 rounded-lg text-xs font-bold uppercase whitespace-nowrap transition bg-zinc-800 text-zinc-400 hover:text-white';
+
+      if (tab === 'settings') {
+        document.getElementById('adminWhatsappInput').value = appCSPhone;
+      }
+    }
+
+    function toggleAutoPassInput() {
+      const isAuto = document.getElementById('autoPassCheck').checked;
+      document.getElementById('manualPassGroup').classList.toggle('hidden', isAuto);
+    }
+
+    async function handleBulkAddStock() {
+      const pkg = document.getElementById('stockPackageSelect').value;
+      const isAutoPass = document.getElementById('autoPassCheck').checked;
+      const manualPass = document.getElementById('manualDefaultPass').value.trim() || '11223344';
+      const text = document.getElementById('bulkAccountInput').value.trim();
+
+      if (!text) {
+        alert('Silakan tempel daftar email akun terlebih dahulu!');
+        return;
+      }
+
+      const lines = text.split('\n');
+      let count = 0;
+
+      lines.forEach(line => {
+        const clean = line.trim();
+        if (clean.length > 3) {
+          let email = clean;
+          let pass = isAutoPass ? '11223344' : manualPass;
+
+          if (clean.includes('|')) {
+            const parts = clean.split('|');
+            email = parts[0].trim();
+            pass = parts[1].trim();
+          }
+
+          appStocks.push({
+            id: Date.now() + Math.random(),
+            pkg: pkg,
+            email: email,
+            pass: pass
+          });
+          count++;
+        }
+      });
+
+      await syncStockToServer();
+      document.getElementById('bulkAccountInput').value = '';
+      renderCatalog();
+      renderAdminStockFilterButtons();
+      renderAdminStock();
+      alert(`Berhasil menambahkan ${count} stok akun untuk PAKET ${pkg} ke server!`);
+    }
+
+    function renderAdminTables() {
+      renderAdminOrders();
+      renderAdminStockFilterButtons();
+      renderAdminStock();
+    }
+
+    function renderAdminOrders() {
+      const tbody = document.getElementById('adminOrderTable');
+      const successfulOrders = appOrders.filter(o => o.status === 'SUCCESS');
+      const totalRevenue = successfulOrders.reduce((sum, o) => sum + (Number(o.price) || 0), 0);
+
+      document.getElementById('statGrossRevenue').innerText = `Rp ${totalRevenue.toLocaleString('id-ID')}`;
+
+      if (appOrders.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-zinc-500">Belum ada data transaksi masuk.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = appOrders.map(o => `
+        <tr class="hover:bg-zinc-800/40">
+          <td class="p-3 sm:p-4 font-mono font-bold text-white">${o.invoice}</td>
+          <td class="p-3 sm:p-4 text-zinc-300">${o.buyer}</td>
+          <td class="p-3 sm:p-4 text-brand-orange font-bold">${o.pkgName}</td>
+          <td class="p-3 sm:p-4 font-display font-bold text-white">Rp ${Number(o.price).toLocaleString('id-ID')}</td>
+          <td class="p-3 sm:p-4 text-zinc-400">${o.time}</td>
+          <td class="p-3 sm:p-4"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold">${o.status}</span></td>
+          <td class="p-3 sm:p-4">
+            <button onclick="alert('Email: ${o.account.email}\\nPassword: ${o.account.pass}')" class="px-2 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[11px] font-sans">Lihat Akun</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderAdminStockFilterButtons() {
+      const container = document.getElementById('stockFilterBtns');
+      const tabs = ['ALL', 'A', 'B', 'C', 'D', 'E'];
+      container.innerHTML = tabs.map(t => {
+        const count = t === 'ALL' ? appStocks.length : appStocks.filter(s => s.pkg === t).length;
+        const label = t === 'ALL' ? 'Semua' : `Paket ${t}`;
+        const active = activeFilterPkg === t;
+        return `
+          <button onclick="setStockFilter('${t}')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition ${active ? 'bg-brand-orange text-white' : 'bg-zinc-800 text-zinc-400 hover:text-white'}">
+            ${label} (${count})
+          </button>
+        `;
+      }).join('');
+    }
+
+    function setStockFilter(pkg) {
+      activeFilterPkg = pkg;
+      renderAdminStockFilterButtons();
+      renderAdminStock();
+    }
+
+    function renderAdminStock() {
+      const tbody = document.getElementById('adminStockTable');
+      const filtered = activeFilterPkg === 'ALL' ? appStocks : appStocks.filter(s => s.pkg === activeFilterPkg);
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-zinc-500 font-sans">Stok kosong untuk filter ini.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(s => `
+        <tr class="hover:bg-zinc-800/40">
+          <td class="p-3"><span class="px-2 py-0.5 rounded bg-zinc-800 text-zinc-300 border border-brand-border text-[10px] font-bold">PAKET ${s.pkg}</span></td>
+          <td class="p-3 text-white break-all">${s.email}</td>
+          <td class="p-3 text-sky-400">${s.pass}</td>
+          <td class="p-3 text-right">
+            <button onclick="deleteSingleStock(${s.id})" class="px-2.5 py-1 rounded bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/30 text-[11px] font-sans transition">Hapus</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function deleteSingleStock(id) {
+      if (confirm('Hapus stok akun ini?')) {
+        appStocks = appStocks.filter(s => s.id !== id);
+        await syncStockToServer();
+        renderCatalog();
+        renderAdminStockFilterButtons();
+        renderAdminStock();
+      }
+    }
+
+    async function clearCurrentFilterStock() {
+      const target = activeFilterPkg;
+      const msg = target === 'ALL' ? 'Kosongkan SEMUA stok akun di seluruh paket?' : `Kosongkan semua stok untuk PAKET ${target}?`;
+      if (confirm(msg)) {
+        if (target === 'ALL') {
+          appStocks = [];
+        } else {
+          appStocks = appStocks.filter(s => s.pkg !== target);
+        }
+        await syncStockToServer();
+        renderCatalog();
+        renderAdminStockFilterButtons();
+        renderAdminStock();
+      }
+    }
+
+    function saveAdminWhatsapp() {
+      const val = document.getElementById('adminWhatsappInput').value.trim();
+      if (!val) {
+        alert('Harap masukkan nomor WhatsApp!');
+        return;
+      }
+      appCSPhone = val;
+      saveState();
+      updateCSButton();
+      alert('Nomor WhatsApp CS berhasil disimpan!');
+    }
+  </script>
+</body>
+</html>
