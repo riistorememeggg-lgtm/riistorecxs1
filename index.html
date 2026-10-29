@@ -526,12 +526,14 @@ function deletePackageItem(idx) {
     let timerInterval = null;
     let autoCheckInterval = null; // Interval auto-check
 
-    window.onload = function() {
-      updateNav();
-      renderBuyerOrders();
-      updateCSButton();
-      loadStocksFromServer();
-    };
+   window.onload = function() {
+    updateNav();
+    renderBuyerOrders();
+    updateCSButton();
+    renderCatalog();
+    renderAdminStockFilterButtons();
+    renderAdminStock();
+};
 
     async function loadStocksFromServer() {
   try {
