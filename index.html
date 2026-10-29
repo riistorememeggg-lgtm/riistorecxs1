@@ -96,11 +96,8 @@
       </p>
     </div>
 
-    <!-- Grid Paket -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" id="packageList"></div>
-
     <!-- PESANAN SAYA -->
-    <div class="mt-14 sm:mt-20 border-t border-brand-border pt-8 sm:pt-10">
+    <div class="mb-10 pb-8 border-b border-brand-border">
       <div class="flex items-center justify-between mb-4 sm:mb-6">
         <div>
           <h3 class="font-racing text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
@@ -111,6 +108,10 @@
       </div>
       <div id="buyerOrdersList" class="space-y-4"></div>
     </div>
+    <!-- GRID PAKET -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6" id="packageList"></div>
+
+   
   </main>
 
   <!-- ADMIN VIEW -->
@@ -137,17 +138,28 @@
         Kelola Stok Akun
       </button>
       <button id="tabBtnSettings" onclick="switchAdminTab('settings')" class="px-3.5 py-2 rounded-lg text-xs font-bold uppercase whitespace-nowrap transition bg-zinc-800 text-zinc-400 hover:text-white">
-        Pengaturan CS WA
+        Pengaturan Web
       </button>
     </div>
 
     <!-- TAB 1: TRANSAKSI & OMSET -->
     <div id="adminTabOrders" class="space-y-6">
+      <!-- STATISTIK GRID: OMSET & MEMBER -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <!-- KARTU 1: TOTAL OMSET -->
       <div class="carbon-card rounded-2xl p-5 border border-brand-border relative overflow-hidden">
         <div class="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-1">Total Omset</div>
         <div id="statGrossRevenue" class="font-display text-3xl sm:text-4xl font-extrabold text-brand-orange">Rp 0</div>
         <p class="text-[11px] text-zinc-500 mt-1">Total akumulasi pembayaran dari seluruh pesanan yang berhasil.</p>
       </div>
+
+      <!-- KARTU 2: MEMBER TERDAFTAR -->
+      <div class="carbon-card rounded-2xl p-5 border border-brand-border relative overflow-hidden">
+        <div class="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-1">Member Terdaftar</div>
+        <div id="statTotalUsers" class="font-display text-3xl sm:text-4xl font-extrabold text-emerald-400">0 User</div>
+        <p class="text-[11px] text-zinc-500 mt-1">Total pengguna yang telah membuat akun di website.</p>
+      </div>
+    </div>
 
       <div class="carbon-card rounded-2xl overflow-hidden border border-brand-border">
         <div class="overflow-x-auto">
@@ -246,24 +258,75 @@ Atau format: email@gmail.com|password" class="w-full bg-zinc-900/90 border borde
       </div>
     </div>
 
-    <!-- TAB 3: SETTING WA CS -->
-    <div id="adminTabSettings" class="hidden">
-      <div class="carbon-card rounded-2xl p-5 sm:p-6 border border-brand-border max-w-lg">
-        <h3 class="font-racing text-base sm:text-lg font-bold text-white mb-2">Pengaturan Kontak WhatsApp CS</h3>
-        <p class="text-xs text-zinc-400 mb-4">Nomor ini yang akan otomatis dihubungi saat tombol WhatsApp melayang diklik pembeli.</p>
-        
-        <div class="mb-4">
-          <label class="block text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2">Nomor WhatsApp CS (Awali dengan kode 62)</label>
-          <input type="text" id="adminWhatsappInput" placeholder="Contoh: 6281234567890" class="w-full bg-zinc-900 border border-brand-border rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-orange">
-        </div>
-
-        <button onclick="saveAdminWhatsapp()" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs uppercase tracking-wider transition">
+    <!-- TAB 3: PENGATURAN WEB & KATALOG -->
+  <div id="adminTabSettings" class="space-y-6 hidden">
+    <!-- PENGATURAN KONTAK CS WA -->
+    <div class="carbon-card rounded-2xl p-5 sm:p-6 border border-brand-border">
+      <h3 class="font-racing text-base sm:text-lg font-bold text-white mb-1">Pengaturan Kontak WhatsApp CS</h3>
+      <p class="text-xs text-zinc-400 mb-4">Nomor WhatsApp ini yang akan dihubungi saat tombol WhatsApp melayang diklik pembeli.</p>
+      <div class="flex flex-col sm:flex-row gap-3">
+        <input type="text" id="adminWhatsappInput" placeholder="Contoh: 6281234567890" class="flex-1 bg-zinc-900 border border-brand-border rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-brand-orange">
+        <button onclick="saveAdminWhatsapp()" class="bg-brand-orange hover:bg-orange-600 text-white font-bold px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider transition">
           Simpan Nomor CS
         </button>
       </div>
     </div>
-  </main>
 
+    <!-- KELOLA KATALOG PRODUK -->
+    <div class="carbon-card rounded-2xl p-5 sm:p-6 border border-brand-border space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="font-racing text-base sm:text-lg font-bold text-white mb-1">Kelola Katalog Produk</h3>
+          <p class="text-xs text-zinc-400">Atur paket jualan, ubah harga, atau tambah paket baru langsung tanpa edit kode.</p>
+        </div>
+        <button onclick="openAddPackageModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-xl text-xs uppercase tracking-wider transition">
+          + Tambah Paket
+        </button>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-zinc-900/80 border-b border-brand-border text-zinc-400 font-bold uppercase tracking-wider">
+            <tr>
+              <th class="p-3">ID Paket</th>
+              <th class="p-3">Nama Paket</th>
+              <th class="p-3">Harga</th>
+              <th class="p-3 text-center">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="adminPackageListTable" class="divide-y divide-zinc-800"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  </main>
+<!-- MODAL FORM TAMBAH / EDIT PAKET -->
+<div id="modalPackageForm" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 items-center justify-center p-4" style="display: none;">
+  <div class="bg-gray-900 border border-brand-border w-full max-w-md rounded-2xl p-6 relative space-y-4">
+    <h3 class="text-lg font-bold text-white" id="modalPackageTitle">Kelola Paket</h3>
+    <input type="hidden" id="pkgFormIdx">
+
+    <div>
+      <label class="text-xs text-zinc-400 block mb-1">ID Paket (Contoh: PKG-01)</label>
+      <input type="text" id="pkgFormId" placeholder="PKG-01" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none">
+    </div>
+
+    <div>
+      <label class="text-xs text-zinc-400 block mb-1">Nama Paket</label>
+      <input type="text" id="pkgFormName" placeholder="Contoh: PAKET A" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none">
+    </div>
+
+    <div>
+      <label class="text-xs text-zinc-400 block mb-1">Harga (Nominal angka saja)</label>
+      <input type="number" id="pkgFormPrice" placeholder="15000" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-xs sm:text-sm text-white focus:outline-none">
+    </div>
+
+    <div class="flex gap-2 pt-2">
+      <button onclick="closePackageModal()" class="w-1/2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-bold py-2.5 rounded-xl text-xs transition">Batal</button>
+      <button onclick="savePackageData()" class="w-1/2 bg-brand-orange hover:bg-orange-600 text-white font-bold py-2.5 rounded-xl text-xs transition">Simpan Paket</button>
+    </div>
+  </div>
+</div>
   <!-- MODAL AUTH -->
   <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
     <div class="carbon-card w-full max-w-sm rounded-2xl p-5 sm:p-6 border border-brand-border relative">
@@ -342,13 +405,13 @@ Atau format: email@gmail.com|password" class="w-full bg-zinc-900/90 border borde
 
   <!-- SCRIPT LOGIC -->
   <script>
-    const PACKAGES = [
-      { id: 'A', name: 'PAKET A', price: 7000, silver: '3M', gold: '3K', lvl: 50, map: 'Semua Terbuka', extra: [] },
-      { id: 'B', name: 'PAKET B', price: 10000, silver: '5M', gold: '5K', lvl: 50, map: 'Semua Terbuka', extra: [] },
-      { id: 'C', name: 'PAKET C', price: 15000, silver: '8M', gold: '8K', lvl: 50, map: 'Semua Terbuka', extra: ['Paling Populer'] },
-      { id: 'D', name: 'PAKET D', price: 20000, silver: '12M', gold: '12K', lvl: 50, map: 'Semua Terbuka', extra: [] },
-      { id: 'E', name: 'PAKET E VIP', price: 50000, silver: '12M', gold: '12K', lvl: 50, map: 'Semua Terbuka', extra: ['Aksesoris Terbuka', 'Dapat 36 Mobil (Tuning Drift/Balap)'], isVip: true }
-    ];
+    let PACKAGES = JSON.parse(localStorage.getItem('rii_packages')) || [
+  { id: 'A', name: 'PAKET A', price: 7000, silver: '3M', gold: '3K', lvl: 50, map: 'Semua Terbuka', extra: [] },
+  { id: 'B', name: 'PAKET B', price: 10000, silver: '5M', gold: '5K', lvl: 50, map: 'Semua Terbuka', extra: [] },
+  { id: 'C', name: 'PAKET C', price: 15000, silver: '8M', gold: '8K', lvl: 50, map: 'Semua Terbuka', extra: ['Paling Populer'] },
+  { id: 'D', name: 'PAKET D', price: 20000, silver: '12M', gold: '12K', lvl: 50, map: 'Semua Terbuka', extra: [] },
+  { id: 'E', name: 'PAKET E VIP', price: 50000, silver: '12M', gold: '12K', lvl: 50, map: 'Semua Terbuka', extra: ['Aksesoris Terbuka', 'Dapat 36 Mobil (Tuning Drift/Balap)'] }
+];
 
     let appUsers = JSON.parse(localStorage.getItem('rii_users')) || [
       { username: 'admin', email: 'admin@riistore.com', password: 'admin123', role: 'admin' }
@@ -358,7 +421,102 @@ Atau format: email@gmail.com|password" class="w-full bg-zinc-900/90 border borde
     let appOrders = JSON.parse(localStorage.getItem('rii_orders')) || [];
     let appCSPhone = localStorage.getItem('rii_cs_phone') || '6281234567890';
     let currentUser = JSON.parse(localStorage.getItem('rii_cur_user')) || null;
+// SIMPAN PAKET & NOMOR CS
+function savePackagesState() {
+  localStorage.setItem('rii_packages', JSON.stringify(PACKAGES));
+}
 
+function saveAdminWhatsapp() {
+  const val = document.getElementById('adminWhatsappInput').value.trim();
+  if (!val) return alert('Masukkan nomor WhatsApp yang valid!');
+  localStorage.setItem('rii_cs_phone', val);
+  appCSPhone = val;
+  const waBtn = document.getElementById('waFloatBtn');
+  if (waBtn) waBtn.href = `https://wa.me/${val}`;
+  alert('Nomor WhatsApp CS berhasil diperbarui!');
+}
+
+// TAMPILKAN TABEL KATALOG DI ADMIN
+function renderAdminPackagesTable() {
+  const tbody = document.getElementById('adminPackageListTable');
+  if (!tbody) return;
+  tbody.innerHTML = PACKAGES.map((pkg, idx) => `
+    <tr class="hover:bg-zinc-800/40">
+      <td class="p-3 font-mono text-zinc-400 font-bold">${pkg.id}</td>
+      <td class="p-3 font-bold text-white">${pkg.name}</td>
+      <td class="p-3 text-brand-orange font-bold">Rp ${Number(pkg.price).toLocaleString('id-ID')}</td>
+      <td class="p-3 text-center space-x-3">
+        <button onclick="editPackageItem(${idx})" class="text-blue-400 hover:underline font-bold">Edit</button>
+        <button onclick="deletePackageItem(${idx})" class="text-red-400 hover:underline font-bold">Hapus</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// MODAL CONTROL
+function openAddPackageModal() {
+  document.getElementById('modalPackageTitle').innerText = 'Tambah Paket Baru';
+  document.getElementById('pkgFormIdx').value = '';
+  document.getElementById('pkgFormId').value = '';
+  document.getElementById('pkgFormName').value = '';
+  document.getElementById('pkgFormPrice').value = '';
+  document.getElementById('modalPackageForm').style.display = 'flex';
+}
+
+function closePackageModal() {
+  document.getElementById('modalPackageForm').style.display = 'none';
+}
+
+function editPackageItem(idx) {
+  const pkg = PACKAGES[idx];
+  document.getElementById('modalPackageTitle').innerText = 'Edit Paket';
+  document.getElementById('pkgFormIdx').value = idx;
+  document.getElementById('pkgFormId').value = pkg.id;
+  document.getElementById('pkgFormName').value = pkg.name;
+  document.getElementById('pkgFormPrice').value = pkg.price;
+  document.getElementById('modalPackageForm').style.display = 'flex';
+}
+
+function savePackageData() {
+  const idx = document.getElementById('pkgFormIdx').value;
+  const id = document.getElementById('pkgFormId').value.trim().toUpperCase();
+  const name = document.getElementById('pkgFormName').value.trim();
+  const price = parseInt(document.getElementById('pkgFormPrice').value);
+
+  if (!id || !name || isNaN(price)) return alert('Harap isi ID, Nama, dan Harga dengan benar!');
+
+  if (idx === '') {
+    PACKAGES.push({
+      id,
+      name,
+      price,
+      silver: 'Custom',
+      gold: 'Custom',
+      lvl: 50,
+      map: 'Semua Terbuka',
+      extra: []
+    });
+  } else {
+    PACKAGES[idx].id = id;
+    PACKAGES[idx].name = name;
+    PACKAGES[idx].price = price;
+  }
+
+  savePackagesState();
+  if (typeof renderCatalog === 'function') renderCatalog();
+  renderAdminPackagesTable();
+  closePackageModal();
+  alert('Katalog paket berhasil disimpan!');
+}
+
+function deletePackageItem(idx) {
+  if (confirm('Yakin ingin menghapus paket ini dari toko?')) {
+    PACKAGES.splice(idx, 1);
+    savePackagesState();
+    if (typeof renderCatalog === 'function') renderCatalog();
+    renderAdminPackagesTable();
+  }
+}
     let activeFilterPkg = 'ALL';
     let authMode = 'login';
     let currentCheckoutPkg = null;
@@ -820,9 +978,10 @@ Atau format: email@gmail.com|password" class="w-full bg-zinc-900/90 border borde
       document.getElementById('tabBtnStock').className = tab === 'stock' ? 'px-3.5 py-2 rounded-lg text-xs font-bold uppercase whitespace-nowrap transition bg-brand-orange text-white' : 'px-3.5 py-2 rounded-lg text-xs font-bold uppercase whitespace-nowrap transition bg-zinc-800 text-zinc-400 hover:text-white';
       document.getElementById('tabBtnSettings').className = tab === 'settings' ? 'px-3.5 py-2 rounded-lg text-xs font-bold uppercase whitespace-nowrap transition bg-brand-orange text-white' : 'px-3.5 py-2 rounded-lg text-xs font-bold uppercase whitespace-nowrap transition bg-zinc-800 text-zinc-400 hover:text-white';
 
-      if (tab === 'settings') {
-        document.getElementById('adminWhatsappInput').value = appCSPhone;
-      }
+     if (tab === 'settings') {
+    document.getElementById('adminWhatsappInput').value = appCSPhone;
+    renderAdminPackagesTable();
+  }
     }
 
     function toggleAutoPassInput() {
@@ -884,7 +1043,11 @@ Atau format: email@gmail.com|password" class="w-full bg-zinc-900/90 border borde
       const tbody = document.getElementById('adminOrderTable');
       const successfulOrders = appOrders.filter(o => o.status === 'SUCCESS');
       const totalRevenue = successfulOrders.reduce((sum, o) => sum + (Number(o.price) || 0), 0);
-
+const totalUsersEl = document.getElementById('statTotalUsers');
+  if (totalUsersEl) {
+    const count = Array.isArray(appUsers) ? appUsers.length : (JSON.parse(localStorage.getItem('appUsers') || '[]')).length;
+    totalUsersEl.innerText = count + ' User';
+  }
       document.getElementById('statGrossRevenue').innerText = `Rp ${totalRevenue.toLocaleString('id-ID')}`;
 
       if (appOrders.length === 0) {
