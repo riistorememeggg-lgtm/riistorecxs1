@@ -12,8 +12,6 @@
       theme: {
         extend: {
           colors: {
-            brand: {
-              orange: '#ff5500',
               red: '#ff1e42',
               dark: '#0b0c10',
               card: '#13151b',
@@ -37,7 +35,6 @@
     body {
       background-color: #08090d;
       color: #f3f4f6;
-      font-family: 'Inter', sans-serif;
       background-image: 
         radial-gradient(circle at 50% 0%, rgba(255, 85, 0, 0.15) 0%, transparent 50%),
         linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
@@ -375,7 +372,7 @@ Atau format: email@gmail.com|password" class="w-full bg-zinc-900/90 border borde
 
     async function loadStocksFromServer() {
       try {
-        const res = await fetch('stock_api.php');
+        const res = await fetch('/api/stock_api');
         const data = await res.json();
         appStocks = Array.isArray(data) ? data : [];
       } catch (err) {
