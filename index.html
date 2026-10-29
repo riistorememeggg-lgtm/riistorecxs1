@@ -526,10 +526,11 @@ function deletePackageItem(idx) {
     let timerInterval = null;
     let autoCheckInterval = null; // Interval auto-check
 
-   window.onload = function() {
+    window.onload = async function() {
     updateNav();
     renderBuyerOrders();
     updateCSButton();
+    await loadStocksFromServer(); // <-- Wajib ambil stok dari server dulu baru tampilkan
     renderCatalog();
     renderAdminStockFilterButtons();
     renderAdminStock();
@@ -894,7 +895,7 @@ function deletePackageItem(idx) {
 
           const newOrder = {
             invoice: 'RII-' + (currentOrderId ? currentOrderId.slice(-6) : Date.now().toString().slice(-6)),
-            buyer: currentUser.username,
+           buyer: (currentUser && currentUser.username) ? currentUser.username : "Pembeli",
             pkgId: currentCheckoutPkg.id,
             pkgName: currentCheckoutPkg.name,
             price: parseInt(document.getElementById('qrisModal').dataset.total),
