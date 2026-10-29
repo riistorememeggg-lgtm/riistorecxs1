@@ -1,4 +1,8 @@
 export default async function handler(req, res) {
+  // Matikan semua jenis cache di browser dan Vercel
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -15,13 +19,13 @@ export default async function handler(req, res) {
 
   const apiKey = "sk_live_d19aa0476d7bbb7bbca4d4f4699e85ce9561f867c7e44cf5";
   
-  // Cek lewat 2 parameter: order_id dan reference_id
+  // Periksa ke Paymenku menggunakan order_id dan reference_id
   const endpoints = [
     `https://paymenku.com/api/v1/transaction/status?order_id=${encodeURIComponent(orderId)}`,
     `https://paymenku.com/api/v1/transaction/status?reference_id=${encodeURIComponent(orderId)}`
   ];
 
-  let lastResponse = null;
+  let rawData = null;
 
   for (const url of endpoints) {
     try {
@@ -31,11 +35,14 @@ export default async function handler(req, res) {
           'Authorization': `Bearer ${apiKey}`,
           'Accept': 'application/json',
           'User-Agent': 'Mozilla/5.0'
-        }
+        },
+        cache: 'no-store'
       });
 
+      if (!apiRes.ok) continue;
+
       const result = await apiRes.json();
-      lastResponse = result;
+      rawData = result;
 
       const status = String(
         result?.data?.status || 
@@ -48,13 +55,13 @@ export default async function handler(req, res) {
         return res.status(200).json({ status: 'paid', gateway_response: result });
       }
     } catch (e) {
-      // Lewati ke percobaan berikutnya jika fetch bermasalah
+      // Lanjut coba endpoint berikutnya
     }
   }
 
   return res.status(200).json({ 
     status: 'unpaid', 
-    message: 'Belum terbayar atau parameter tidak cocok',
-    raw: lastResponse 
+    message: 'Transaksi belum terbaca paid di gateway',
+    gateway_data: rawData
   });
 }
