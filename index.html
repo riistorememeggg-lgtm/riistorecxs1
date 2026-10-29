@@ -534,17 +534,29 @@ function deletePackageItem(idx) {
     };
 
     async function loadStocksFromServer() {
-      try {
-        const res = await fetch('/api/stock_api');
-        const data = await res.json();
-        appStocks = Array.isArray(data) ? data : [];
-      } catch (err) {
-        appStocks = [];
+  try {
+    const res = await fetch('/api/stock_api');
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        appStocks = data;
+        localStorage.setItem('rii_stocks', JSON.stringify(appStocks));
+      } else {
+        const local = localStorage.getItem('rii_stocks');
+        if (local) appStocks = JSON.parse(local);
       }
-      renderCatalog();
-      renderAdminStockFilterButtons();
-      renderAdminStock();
+    } else {
+      const local = localStorage.getItem('rii_stocks');
+      if (local) appStocks = JSON.parse(local);
     }
+  } catch (err) {
+    const local = localStorage.getItem('rii_stocks');
+    if (local) appStocks = JSON.parse(local);
+  }
+  renderCatalog();
+  renderAdminStockFilterButtons();
+  renderAdminStock();
+}
 
     async function refreshStockFromServer() {
       const btn = document.getElementById('btnRefreshStock');
@@ -573,15 +585,16 @@ function deletePackageItem(idx) {
     }
 
     function saveState() {
-      localStorage.setItem('rii_users', JSON.stringify(appUsers));
-      localStorage.setItem('rii_orders', JSON.stringify(appOrders));
-      localStorage.setItem('rii_cs_phone', appCSPhone);
-      if (currentUser) {
-        localStorage.setItem('rii_cur_user', JSON.stringify(currentUser));
-      } else {
-        localStorage.removeItem('rii_cur_user');
-      }
-    }
+  localStorage.setItem('rii_users', JSON.stringify(appUsers));
+  localStorage.setItem('rii_orders', JSON.stringify(appOrders));
+  localStorage.setItem('rii_stocks', JSON.stringify(appStocks));
+  localStorage.setItem('rii_cs_phone', appCSPhone);
+  if (currentUser) {
+    localStorage.setItem('rii_cur_user', JSON.stringify(currentUser));
+  } else {
+    localStorage.removeItem('rii_cur_user');
+  }
+}
 
     function updateCSButton() {
       const btn = document.getElementById('waFloatBtn');
