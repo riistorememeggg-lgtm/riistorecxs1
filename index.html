@@ -417,7 +417,7 @@ Atau format: email@gmail.com|password" class="w-full bg-zinc-900/90 border borde
       { username: 'admin', email: 'admin@riistore.com', password: 'admin123', role: 'admin' }
     ];
 
-    let appStocks = [];
+   let appStocks = JSON.parse(localStorage.getItem('rii_stocks')) || [];
     let appOrders = JSON.parse(localStorage.getItem('rii_orders')) || [];
     let appCSPhone = localStorage.getItem('rii_cs_phone') || '6281234567890';
     let currentUser = JSON.parse(localStorage.getItem('rii_cur_user')) || null;
@@ -425,7 +425,9 @@ Atau format: email@gmail.com|password" class="w-full bg-zinc-900/90 border borde
 function savePackagesState() {
   localStorage.setItem('rii_packages', JSON.stringify(PACKAGES));
 }
-
+function saveStocksState() {
+  localStorage.setItem('rii_stocks', JSON.stringify(appStocks));
+}
 function saveAdminWhatsapp() {
   const val = document.getElementById('adminWhatsappInput').value.trim();
   if (!val) return alert('Masukkan nomor WhatsApp yang valid!');
@@ -712,12 +714,14 @@ function deletePackageItem(idx) {
     function renderCatalog() {
       const container = document.getElementById('packageList');
       container.innerHTML = PACKAGES.map(pkg => {
-        const stockCount = appStocks.filter(s => s.pkg === pkg.id).length;
-        const extraBadges = pkg.extra.map(ex => `
-          <li class="flex items-center gap-2 text-xs text-zinc-300">
-            <span class="text-brand-orange font-bold">✓</span> ${ex}
-          </li>
-        `).join('');
+        const stockCount = appStocks.filter(s => 
+      String(s.pkg || s.packageId || '').trim().toUpperCase() === String(pkg.id || '').trim().toUpperCase()
+    ).length;
+    const extraBadges = (pkg.extra || []).map(ex => `
+      <li class="flex items-center gap-2 text-xs text-zinc-300">
+        <span class="text-brand-orange font-bold">✓</span> ${ex}
+      </li>
+    `).join('');
 
         return `
           <div class="carbon-card rounded-2xl p-5 sm:p-6 relative flex flex-col justify-between neon-border-hover transition duration-200 border border-brand-border ${pkg.isVip ? 'ring-1 ring-amber-500/50' : ''}">
@@ -1025,12 +1029,14 @@ function deletePackageItem(idx) {
         }
       });
 
-      await syncStockToServer();
-      document.getElementById('bulkAccountInput').value = '';
-      renderCatalog();
-      renderAdminStockFilterButtons();
-      renderAdminStock();
-      alert(`Berhasil menambahkan ${count} stok akun untuk PAKET ${pkg} ke server!`);
+     await syncStockToServer();
+    saveStocksState();
+    document.getElementById('bulkAccountInput').value = '';
+    renderCatalog();
+    renderAdminStockFilterButtons();
+    renderAdminStock();
+    alert(`Berhasil menambahkan ${count} stok akun untuk PAKET ${pkg} ke server!`);
+     
     }
 
     function renderAdminTables() {
@@ -1070,19 +1076,36 @@ const totalUsersEl = document.getElementById('statTotalUsers');
     }
 
     function renderAdminStockFilterButtons() {
-      const container = document.getElementById('stockFilterBtns');
-      const tabs = ['ALL', 'A', 'B', 'C', 'D', 'E'];
-      container.innerHTML = tabs.map(t => {
-        const count = t === 'ALL' ? appStocks.length : appStocks.filter(s => s.pkg === t).length;
-        const label = t === 'ALL' ? 'Semua' : `Paket ${t}`;
-        const active = activeFilterPkg === t;
-        return `
-          <button onclick="setStockFilter('${t}')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition ${active ? 'bg-brand-orange text-white' : 'bg-zinc-800 text-zinc-400 hover:text-white'}">
-            ${label} (${count})
-          </button>
-        `;
-      }).join('');
-    }
+  // Update Dropdown Pilihan Paket Tambah Stok
+  const selectEl = document.getElementById('stockPackageSelect');
+  if (selectEl && typeof PACKAGES !== 'undefined') {
+    const curVal = selectEl.value;
+    selectEl.innerHTML = PACKAGES.map(p => `
+      <option value="${p.id}">${p.name} (ID: ${p.id})</option>
+    `).join('');
+    if (curVal) selectEl.value = curVal;
+  }
+
+  // Update Tombol Filter Tab Stok
+  const container = document.getElementById('stockFilterBtns');
+  if (!container || typeof PACKAGES === 'undefined') return;
+
+  const pkgIds = PACKAGES.map(p => p.id);
+  const tabs = ['ALL', ...pkgIds];
+
+  container.innerHTML = tabs.map(t => {
+    const count = t === 'ALL' 
+      ? appStocks.length 
+      : appStocks.filter(s => String(s.pkg || s.packageId || '').trim().toUpperCase() === String(t).trim().toUpperCase()).length;
+    const label = t === 'ALL' ? 'Semua' : `Paket ${t}`;
+    const active = activeFilterPkg === t;
+    return `
+      <button onclick="setStockFilter('${t}')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition ${active ? 'bg-brand-orange text-white' : 'bg-zinc-900 border border-brand-border text-zinc-400 hover:text-white'}">
+        ${label} (${count})
+      </button>
+    `;
+  }).join('');
+}
 
     function setStockFilter(pkg) {
       activeFilterPkg = pkg;
@@ -1092,7 +1115,7 @@ const totalUsersEl = document.getElementById('statTotalUsers');
 
     function renderAdminStock() {
       const tbody = document.getElementById('adminStockTable');
-      const filtered = activeFilterPkg === 'ALL' ? appStocks : appStocks.filter(s => s.pkg === activeFilterPkg);
+      const filtered = activeFilterPkg === 'ALL' ? appStocks : appStocks.filter(s => String(s.pkg || s.packageId || '').trim().toUpperCase() === String(activeFilterPkg).trim().toUpperCase());
 
       if (filtered.length === 0) {
         tbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-zinc-500 font-sans">Stok kosong untuk filter ini.</td></tr>`;
