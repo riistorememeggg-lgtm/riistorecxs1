@@ -741,7 +741,7 @@ Atau format: email@gmail.com|password" class="w-full bg-zinc-900/90 border borde
       document.getElementById('accPassword').innerText = assignedStock.pass;
 
       const successModal = document.getElementById('successAccountModal');
-      successModal.classList.remove('hidden');
+      successModal.style.display = 'flex';
       successModal.classList.add('flex');
         } else if (isManual) {
           alertBox.className = "mb-3 p-2.5 rounded-xl bg-red-500/15 border border-red-500/30 text-red-400 text-xs font-semibold flex items-center justify-center gap-2";
@@ -987,7 +987,7 @@ Atau format: email@gmail.com|password" class="w-full bg-zinc-900/90 border borde
     }
   </script>
 <!-- POPUP DETAIL AKUN -->
-<div id="successAccountModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+<div id="successAccountModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 items-center justify-center p-4" style="display: none;">
   <div class="bg-gray-900 border border-emerald-500/50 w-full max-w-md rounded-2xl p-6 relative shadow-2xl text-center">
     <div class="w-14 h-14 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl border border-emerald-500/40">
       ✓
