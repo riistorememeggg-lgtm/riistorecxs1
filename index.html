@@ -1044,11 +1044,12 @@ function deletePackageItem(idx) {
         }
       });
 
-     await syncStockToServer();
-    saveStocksState();
-    document.getElementById('bulkAccountInput').value = '';
+     saveStocksState();
     renderCatalog();
     renderAdminStockFilterButtons();
+    renderAdminStock();
+    document.getElementById('bulkAccountInput').value = '';
+    syncStockToServer();
     renderAdminStock();
     alert(`Berhasil menambahkan ${count} stok akun untuk PAKET ${pkg} ke server!`);
      
