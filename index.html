@@ -536,30 +536,28 @@ function deletePackageItem(idx) {
     renderAdminStock();
 };
 
+        const CLOUD_STOCK_URL = 'https://api.restful-api.dev/objects/ff808181a09d98f701a1878d224d4ca5';
+
+    // 1. Ambil stok langsung dari Cloud (Otomatis untuk semua pembeli & incognito)
     async function loadStocksFromServer() {
-  try {
-    const res = await fetch('/api/stock_api');
-    if (res.ok) {
-      const data = await res.json();
-      if (Array.isArray(data) && data.length > 0) {
-        appStocks = data;
-        localStorage.setItem('rii_stocks', JSON.stringify(appStocks));
-      } else {
+      try {
+        const res = await fetch(CLOUD_STOCK_URL);
+        if (res.ok) {
+          const json = await res.json();
+          if (json && json.data && Array.isArray(json.data.stocks)) {
+            appStocks = json.data.stocks;
+            localStorage.setItem('rii_stocks', JSON.stringify(appStocks));
+          }
+        }
+      } catch (err) {
+        console.error('Gagal mengambil stok:', err);
         const local = localStorage.getItem('rii_stocks');
         if (local) appStocks = JSON.parse(local);
       }
-    } else {
-      const local = localStorage.getItem('rii_stocks');
-      if (local) appStocks = JSON.parse(local);
+      renderCatalog();
+      renderAdminStockFilterButtons();
+      renderAdminStock();
     }
-  } catch (err) {
-    const local = localStorage.getItem('rii_stocks');
-    if (local) appStocks = JSON.parse(local);
-  }
-  renderCatalog();
-  renderAdminStockFilterButtons();
-  renderAdminStock();
-}
 
     async function refreshStockFromServer() {
       const btn = document.getElementById('btnRefreshStock');
@@ -575,7 +573,22 @@ function deletePackageItem(idx) {
       }, 500);
     }
 
+    // 2. Simpan stok langsung ke Cloud saat Admin tambah stok
     async function syncStockToServer() {
+      try {
+        saveStocksState();
+        await fetch(CLOUD_STOCK_URL, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: 'riistore_stock',
+            data: { stocks: appStocks }
+          })
+        });
+      } catch (err) {
+        console.error('Gagal simpan stok ke cloud:', err);
+      }
+    }
       try {
         await fetch('/api/stock_api', {
           method: 'POST',
