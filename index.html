@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RIISTORE - Toko Akun CarX Street</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body { background-color: #0b0f17; color: #f3f4f6; font-family: sans-serif; }
+  </style>
+</head>
+<body class="min-h-screen pb-20">
+
+  <!-- Header -->
+  <header class="border-b border-gray-800 bg-gray-900/50 backdrop-blur sticky top-0 z-50 p-4">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="bg-red-600 text-white font-black text-xl px-3 py-1 rounded">R</div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-extrabold text-lg tracking-wider text-white">RIISTORE</h1>
+            <span class="text-xs bg-red-950 text-red-400 border border-red-800 px-1.5 py-0.5 rounded font-mono">CARX</span>
+          </div>
+          <p class="text-xs text-gray-400">OFFICIAL CARX STREET GARAGE</p>
+        </div>
+      </div>
+      <a href="https://wa.me/6281234567890" target="_blank" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3 py-2 rounded-lg flex items-center gap-2 font-medium">
+        <i class="fab fa-whatsapp text-sm"></i> Bantuan CS
+      </a>
+    </div>
+  </header>
+
+  <!-- Banner -->
+  <main class="max-w-6xl mx-auto px-4 mt-8">
+    <div class="text-center mb-10">
+      <span class="bg-red-950/70 border border-red-700/50 text-red-400 text-xs px-3 py-1 rounded-full uppercase tracking-widest font-semibold inline-block mb-3">
+        ⚡ INSTANT AUTOMATIC DELIVERY
+      </span>
+      <h2 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">AKUN CARX STREET SULTAN</h2>
+      <p class="text-gray-400 text-sm mt-2 max-w-lg mx-auto">Pilih paket sesuai kebutuhan balapmu. Pembayaran QRIS Dinamis cepat dan akun langsung terkirim otomatis.</p>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="productContainer">
+      <!-- Data Paket terpasang langsung di bawah -->
+    </div>
+
+    <!-- Pesanan & Akun Saya -->
+    <div class="mt-16 bg-gray-900/40 border border-gray-800 rounded-2xl p-6">
+      <div class="flex items-center gap-2 mb-2">
+        <i class="fas fa-box text-amber-500"></i>
+        <h3 class="font-bold text-lg text-white">Pesanan & Akun Saya</h3>
+      </div>
+      <p class="text-xs text-gray-400 mb-4">Daftar akun CarX yang telah Anda beli.</p>
+      <div id="orderHistory" class="text-center py-8 text-gray-500 text-sm border border-dashed border-gray-800 rounded-xl">
+        Belum ada pembelian tersimpan di browser ini.
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal Checkout & QRIS -->
+  <div id="paymentModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-gray-900 border border-gray-800 w-full max-w-md rounded-2xl p-6 relative">
+      <button onclick="closeModal()" class="absolute right-4 top-4 text-gray-400 hover:text-white text-lg">✕</button>
+      
+      <div id="checkoutStep">
+        <h3 class="text-lg font-bold text-white mb-1" id="modalPkgName">Paket</h3>
+        <p class="text-red-500 font-extrabold text-xl mb-4" id="modalPrice">Rp 0</p>
+        
+        <div class="space-y-3">
+          <div>
+            <label class="text-xs text-gray-400 mb-1 block">Nama Pembeli</label>
+            <input type="text" id="buyerName" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500" placeholder="Contoh: Rian">
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 mb-1 block">Nomor WhatsApp</label>
+            <input type="text" id="buyerPhone" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500" placeholder="08xxxxxxxxxx">
+          </div>
+          <button onclick="processPayment()" id="btnBayar" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-2.5 rounded-lg text-sm mt-2 transition">
+            Bayar Sekarang (QRIS)
+          </button>
+        </div>
+      </div>
+
+      <div id="qrisStep" class="hidden text-center">
+        <h3 class="font-bold text-white mb-2">Scan QRIS Untuk Bayar</h3>
+        <p class="text-xs text-gray-400 mb-4">Mendukung GoPay, OVO, Dana, ShopeePay, dan Seluruh Bank</p>
+        <div id="qrcodeBox" class="bg-white p-4 rounded-xl inline-block mb-4 shadow"></div>
+        <p class="text-xs text-amber-400 animate-pulse">Menunggu pembayaran otomatis terkonfirmasi...</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // DATA PAKET ASLI (TERTULIS LANGSUNG, GAK BAKAL KOSONG LAGI)
+    const products = [
+      {
+        id: "paket_a",
+        name: "PAKET A",
+        price: 7000,
+        features: ["SILVER 3M", "GOLD 3K", "LEVEL AKUN 50", "SEMUA MAP TERBUKA"]
+      },
+      {
+        id: "paket_b",
+        name: "PAKET B",
+        price: 10000,
+        features: ["SILVER 5M", "GOLD 5K", "LEVEL AKUN 50", "SEMUA MAP TERBUKA"]
+      },
+      {
+        id: "paket_c",
+        name: "PAKET C",
+        price: 15000,
+        features: ["SILVER 8M", "GOLD 8K", "LEVEL AKUN 50", "SEMUA MAP TERBUKA"]
+      },
+      {
+        id: "paket_d",
+        name: "PAKET D",
+        price: 20000,
+        features: ["SILVER 12M", "GOLD 12K", "LEVEL AKUN 50", "SEMUA MAP TERBUKA"]
+      },
+      {
+        id: "paket_e",
+        name: "PAKET E",
+        price: 50000,
+        features: [
+          "SILVER 12M",
+          "GOLD 12K",
+          "LEVEL AKUN 50",
+          "SEMUA MAP TERBUKA",
+          "AKSESORIS TERBUKA",
+          "DAPAT 36 MOBIL (Sebagian Tuning Drift/Balap)"
+        ]
+      }
+    ];
+
+    let selectedPkg = null;
+
+    function renderProducts() {
+      const container = document.getElementById('productContainer');
+      container.innerHTML = products.map(pkg => `
+        <div class="bg-gray-900/60 border border-gray-800 rounded-2xl p-6 flex flex-col justify-between hover:border-red-600/50 transition">
+          <div>
+            <div class="flex justify-between items-start mb-4">
+              <h3 class="font-black text-xl text-white tracking-wide">${pkg.name}</h3>
+              <span class="text-xs bg-emerald-950 text-emerald-400 border border-emerald-800/80 px-2 py-0.5 rounded-full">Ready</span>
+            </div>
+            <div class="text-2xl font-black text-red-500 mb-6">Rp ${pkg.price.toLocaleString('id-ID')}</div>
+            <div class="space-y-2 mb-6">
+              ${pkg.features.map(f => `
+                <div class="flex items-center gap-2 text-xs text-gray-300">
+                  <i class="fas fa-check text-red-500 text-[10px]"></i>
+                  <span>${f}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+          <button onclick="openModal('${pkg.id}')" class="w-full bg-red-600/90 hover:bg-red-600 text-white font-bold py-2.5 rounded-xl text-sm transition">
+            Beli Sekarang
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function openModal(id) {
+      selectedPkg = products.find(p => p.id === id);
+      document.getElementById('modalPkgName').innerText = selectedPkg.name;
+      document.getElementById('modalPrice').innerText = 'Rp ' + selectedPkg.price.toLocaleString('id-ID');
+      document.getElementById('checkoutStep').classList.remove('hidden');
+      document.getElementById('qrisStep').classList.add('hidden');
+      document.getElementById('paymentModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('paymentModal').classList.add('hidden');
+    }
+
+    async function processPayment() {
+      const buyer = document.getElementById('buyerName').value.trim();
+      const phone = document.getElementById('buyerPhone').value.trim();
+      if (!buyer || !phone) {
+        alert("Harap isi nama dan nomor WhatsApp Anda!");
+        return;
+      }
+
+      const btn = document.getElementById('btnBayar');
+      btn.innerText = "Membuat Pembayaran...";
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/create_payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            pkgName: selectedPkg.name,
+            amount: selectedPkg.price,
+            buyer: buyer,
+            phone: phone
+          })
+        });
+
+        const data = await res.json();
+        if (data.status === 'success' && data.qr_string) {
+          document.getElementById('checkoutStep').classList.add('hidden');
+          document.getElementById('qrisStep').classList.remove('hidden');
+          document.getElementById('qrcodeBox').innerHTML = "";
+          new QRCode(document.getElementById("qrcodeBox"), {
+            text: data.qr_string,
+            width: 200,
+            height: 200
+          });
+        } else {
+          alert("Gagal membuat QRIS: " + (data.message || "Cek API Key Paymentku"));
+        }
+      } catch (err) {
+        alert("Terjadi kesalahan jaringan.");
+      } finally {
+        btn.innerText = "Bayar Sekarang (QRIS)";
+        btn.disabled = false;
+      }
+    }
+
+    renderProducts();
+  </script>
+</body>
+</html>
