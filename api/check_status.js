@@ -1,8 +1,5 @@
 export default async function handler(req, res) {
-  // Matikan semua jenis cache di browser dan Vercel
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-  res.setHeader('Pragma', 'no-cache');
-  res.setHeader('Expires', '0');
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -19,30 +16,34 @@ export default async function handler(req, res) {
 
   const apiKey = "sk_live_d19aa0476d7bbb7bbca4d4f4699e85ce9561f867c7e44cf5";
   
-  // Periksa ke Paymenku menggunakan order_id dan reference_id
-  const endpoints = [
-    `https://paymenku.com/api/v1/transaction/status?order_id=${encodeURIComponent(orderId)}`,
-    `https://paymenku.com/api/v1/transaction/status?reference_id=${encodeURIComponent(orderId)}`
+  // Cek endpoint paymentku.com dan paymenku.com langsung
+  const targets = [
+    `https://paymentku.com/api/v1/transaction/status?order_id=${encodeURIComponent(orderId)}`,
+    `https://paymenku.com/api/v1/transaction/status?order_id=${encodeURIComponent(orderId)}`
   ];
 
-  let rawData = null;
+  let rawLog = [];
 
-  for (const url of endpoints) {
+  for (const url of targets) {
     try {
-      const apiRes = await fetch(url, {
+      const response = await fetch(url, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${apiKey}`,
-          'Accept': 'application/json',
-          'User-Agent': 'Mozilla/5.0'
+          'Accept': 'application/json'
         },
         cache: 'no-store'
       });
 
-      if (!apiRes.ok) continue;
+      const text = await response.text();
+      let result;
+      try {
+        result = JSON.parse(text);
+      } catch (err) {
+        result = { raw_html: text.substring(0, 200) };
+      }
 
-      const result = await apiRes.json();
-      rawData = result;
+      rawLog.push({ url, status_code: response.status, body: result });
 
       const status = String(
         result?.data?.status || 
@@ -54,14 +55,14 @@ export default async function handler(req, res) {
       if (['paid', 'success', 'settlement', 'berhasil', 'complete'].includes(status)) {
         return res.status(200).json({ status: 'paid', gateway_response: result });
       }
-    } catch (e) {
-      // Lanjut coba endpoint berikutnya
+    } catch (err) {
+      rawLog.push({ url, error: err.message });
     }
   }
 
-  return res.status(200).json({ 
-    status: 'unpaid', 
-    message: 'Transaksi belum terbaca paid di gateway',
-    gateway_data: rawData
+  return res.status(200).json({
+    status: 'unpaid',
+    message: 'Belum terbaca paid',
+    debug: rawLog
   });
 }
